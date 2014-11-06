@@ -33,3 +33,15 @@ pub fn gen_uuid() -> String {
         CString::new(out.as_ptr(), false).as_str().unwrap()
     })
 }
+
+#[cfg(test)]
+mod test {
+    use super::gen_uuid;
+
+    #[test]
+    fn test_gen() {
+        let uuid = gen_uuid();
+        assert_eq!(uuid.len(), 36);
+        assert!(uuid.is_ascii())
+    }
+}
