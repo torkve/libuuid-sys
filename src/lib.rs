@@ -16,7 +16,7 @@ fn r_uuid_t() -> r_uuid_t {
     [0, ..37]
 }
 
-#[link(name = "uuid", kind = "static")]
+#[link(name = "uuid")]
 extern {
     fn uuid_generate(out: *mut libc::c_char);
     fn uuid_unparse(uu: *const libc::c_char, out: *mut libc::c_char);
