@@ -1,0 +1,14 @@
+[package]
+
+name = "libuuid-sys"
+version = "0.0.1"
+authors = ["Vsevolod Velichko <torkvema@gmail.com>"]
+links = "uuid"
+build = "build.rs"
+
+[lib]
+  name = "libuuid-sys"
+  path = "src/lib.rs"
+
+[build-dependencies.pkg-config]
+  git = "https://github.com/alexcrichton/pkg-config-rs.git"
