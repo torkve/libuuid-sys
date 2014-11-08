@@ -81,36 +81,32 @@ mod c {
 }
 
 macro_rules! gen (
-    ($f:ident) => ({
-        let mut out = uuid_t();
-        unsafe { c::$f(out.as_mut_ptr()) };
-        Uuid(out)
-    })
+    ($f:ident) => (
+        pub fn $f() -> Uuid {
+            let mut out = uuid_t();
+            unsafe { c::$f(out.as_mut_ptr()) };
+            Uuid(out)
+        }
+    )
 )
 macro_rules! unparse (
-    ($f:ident, $uu:ident) => ({
-        let mut out = r_uuid_t();
-        let Uuid(inp) = $uu;
-        unsafe {
-            c::$f(inp.as_ptr(), out.as_mut_ptr());
+    ($f:ident) => (
+        pub fn $f(s: Uuid) -> String {
+            let mut out = r_uuid_t();
+            let Uuid(inp) = s;
+            unsafe {
+                c::$f(inp.as_ptr(), out.as_mut_ptr());
+            }
+            String::from_str(unsafe{
+                CString::new(out.as_ptr(), false).as_str().unwrap()
+            })
         }
-        String::from_str(unsafe{
-            CString::new(out.as_ptr(), false).as_str().unwrap()
-        })
-    })
+    )
 )
 
-pub fn uuid_generate() -> Uuid {
-    gen!(uuid_generate)
-}
-
-pub fn uuid_generate_random() -> Uuid {
-    gen!(uuid_generate_random)
-}
-
-pub fn uuid_generate_time() -> Uuid {
-    gen!(uuid_generate_time)
-}
+gen!(uuid_generate)
+gen!(uuid_generate_random)
+gen!(uuid_generate_time)
 
 pub fn uuid_generate_time_safe() -> (Uuid, bool) {
     let mut out = uuid_t();
@@ -126,17 +122,9 @@ pub fn uuid_parse(s: &str) -> Option<Uuid> {
     }
 }
 
-pub fn uuid_unparse(s: Uuid) -> String {
-    unparse!(uuid_unparse, s)
-}
-
-pub fn uuid_unparse_lower(s: Uuid) -> String {
-    unparse!(uuid_unparse_lower, s)
-}
-
-pub fn uuid_unparse_upper(s: Uuid) -> String {
-    unparse!(uuid_unparse_upper, s)
-}
+unparse!(uuid_unparse)
+unparse!(uuid_unparse_lower)
+unparse!(uuid_unparse_upper)
 
 #[cfg(test)]
 mod test {
